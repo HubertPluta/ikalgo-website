@@ -100,13 +100,21 @@
     /* Dlaczego Ikalgo */
     .why__header { text-align: center; margin-bottom: 48px; }
     .why__layout { display: grid; grid-template-columns: minmax(0, 413px) 1fr minmax(0, 413px); gap: 32px; align-items: start; }
-    .why__layout > img { width: 100%; aspect-ratio: 413 / 487; object-fit: cover; border-radius: 16px; }
+    .why__frame { position: relative; overflow: hidden; width: 100%; aspect-ratio: 413 / 487; border-radius: 16px; }
+    .why__frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; will-change: transform; }
     .why__layout .img-right { margin-top: 120px; }
     .why__body { text-align: center; padding-top: 60px; max-width: 480px; margin: 0 auto; }
     .why__body h3 { font-size: clamp(1.75rem, 3vw, 3.125rem); font-weight: 700; margin-bottom: 24px; }
-    .slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
-    .slider::-webkit-scrollbar { display: none; }
-    .slide { flex: 0 0 100%; scroll-snap-align: center; }
+    .slider { display: grid; } /* wszystkie slajdy w jednej komórce – wysokość = najwyższy slajd, brak skoków układu */
+    .slide {
+      grid-area: 1 / 1; opacity: 0; visibility: hidden; transform: translateY(18px);
+      transition: opacity .35s ease, transform .5s cubic-bezier(.2, .7, .2, 1), visibility 0s linear .35s;
+    }
+    .slide.is-active {
+      opacity: 1; visibility: visible; transform: none;
+      transition: opacity .55s ease .25s, transform .7s cubic-bezier(.2, .7, .2, 1) .25s, visibility 0s;
+    }
+    .slider:focus-visible { outline-offset: 8px; border-radius: 8px; }
     .slider-controls { display: flex; justify-content: center; gap: 32px; margin-top: 40px; }
     .arrow { width: 65px; height: 65px; border: 0; border-radius: 50%; background: var(--mint-200); display: grid; place-items: center; cursor: pointer; transition: background .2s; }
     .arrow:hover { background: #a9cbb0; }
@@ -195,7 +203,7 @@
       .custom__grid img { aspect-ratio: auto; height: clamp(160px, 30vh, 420px); }
 
       .why__header { margin-bottom: clamp(16px, 5vh, 48px); }
-      .why__layout > img { aspect-ratio: auto; height: clamp(260px, 58vh, 487px); }
+      .why__layout > .why__frame { aspect-ratio: auto; height: clamp(260px, 58vh, 487px); }
       .why__layout .img-right { margin-top: clamp(24px, 10vh, 120px); }
       .why__body { padding-top: clamp(0px, 4vh, 60px); }
       .slider-controls { margin-top: clamp(16px, 4vh, 40px); }
@@ -353,7 +361,7 @@
       .custom__grid img { aspect-ratio: 3 / 4; border-radius: 12px; }
       .why__layout { grid-template-columns: 1fr 1fr; gap: 12px; }
       .why__layout .img-right { display: block; margin-top: 0; }
-      .why__layout > img { border-radius: 12px; }
+      .why__layout > .why__frame { border-radius: 12px; }
       .feature__main { height: clamp(240px, 44svh, 420px); }
     }
   </style>
@@ -472,13 +480,33 @@
       <div class="container">
         <div class="why__header"><h2 class="title-xl" id="why-title">Dlaczego Ikalgo?</h2></div>
         <div class="why__layout">
-          <img src="public/images/post-15-11-2025-p1.jpg" alt="Autorski projekt biżuterii" loading="lazy" />
+          <div class="why__frame why__frame--left"><img src="public/images/post-15-11-2025-p1.jpg" alt="Autorski projekt biżuterii" loading="lazy" /></div>
           <div class="why__body">
-            <div class="slider" id="slider" tabindex="0" aria-label="Zalety Ikalgo">
-              <!-- Kolejne slajdy dodajesz jako <article class="slide"> -->
-              <article class="slide">
+            <div class="slider" id="slider" tabindex="0" aria-live="polite" aria-label="Dlaczego Ikalgo – kolejne powody">
+              <!-- Nowy slajd = kolejny <article class="slide">. Zdjęcia ustawiasz w data-left / data-right. -->
+              <article class="slide is-active"
+                data-left="public/images/post-15-11-2025-p1.jpg" data-alt-left="Autorski projekt biżuterii"
+                data-right="public/images/post-31-01-p1.jpg" data-alt-right="Biżuteria z charakterem">
                 <h3>Autorskie projekty</h3>
                 <p class="lead">Tworzę własne projekty, które pozwalają mi eksperymentować z formą i tworzyć biżuterię z charakterem.</p>
+              </article>
+              <article class="slide" aria-hidden="true"
+                data-left="public/images/post-19-08-2025-p1.jpg" data-alt-left="Ręcznie wykonana biżuteria"
+                data-right="public/images/post-15-11-2025-p3.jpg" data-alt-right="Detal ręcznie robionej biżuterii">
+                <h3>Ręczne wykonanie</h3>
+                <p class="lead">Każdy element powstaje ręcznie, w małych seriach. Dbam o detale, dzięki którym biżuteria jest trwała i wyjątkowa.</p>
+              </article>
+              <article class="slide" aria-hidden="true"
+                data-left="public/images/post-24-11-2024-p2.jpg" data-alt-left="Projekt na zamówienie"
+                data-right="public/images/post-16-01-p1.jpg" data-alt-right="Biżuteria dopasowana do stylu">
+                <h3>Na zamówienie</h3>
+                <p class="lead">Razem stworzymy biżuterię dopasowaną do Twojego stylu i okazji – od pomysłu aż po gotowy projekt.</p>
+              </article>
+              <article class="slide" aria-hidden="true"
+                data-left="public/images/post-12-08-p3.jpg" data-alt-left="Biżuteria jako wspomnienie"
+                data-right="public/images/post-12-08-p2.jpg" data-alt-right="Biżuteria jako prezent">
+                <h3>Biżuteria z historią</h3>
+                <p class="lead">Może być wspomnieniem albo prezentem. Tworzę ją tak, żeby miała znaczenie dla osoby, która ją nosi.</p>
               </article>
             </div>
             <div class="slider-controls">
@@ -487,7 +515,7 @@
             </div>
             <div class="why__cta"><a class="btn" href="#o-mnie-wiecej">Poznaj więcej</a></div>
           </div>
-          <img class="img-right" src="public/images/post-31-01-p1.jpg" alt="Biżuteria z charakterem" loading="lazy" />
+          <div class="why__frame why__frame--right img-right"><img src="public/images/post-31-01-p1.jpg" alt="Biżuteria z charakterem" loading="lazy" /></div>
         </div>
       </div>
     </section>
@@ -521,7 +549,7 @@
           </ul>
         </div>
 
-        <form class="form" id="contact-form" novalidate>
+        <form class="form" id="contact-form" action="/api/contact" method="post" novalidate>
           <div class="field">
             <label for="name">Imię</label>
             <input id="name" name="name" type="text" placeholder="Wpisz imię..." autocomplete="given-name" required minlength="2" />
@@ -582,11 +610,63 @@
       if (e.target.tagName === 'A') { nav.classList.remove('is-open'); toggle.setAttribute('aria-expanded', 'false'); }
     });
 
-    // Slider
-    const slider = document.getElementById('slider');
-    document.querySelectorAll('.arrow').forEach(btn =>
-      btn.addEventListener('click', () => slider.scrollBy({ left: slider.clientWidth * btn.dataset.dir, behavior: 'smooth' }))
-    );
+    // „Dlaczego Ikalgo” – zmiana tekstów i zdjęć strzałkami
+    (() => {
+      const slider = document.getElementById('slider');
+      if (!slider) return;
+      const slides = [...slider.querySelectorAll('.slide')];
+      const layout = slider.closest('.why__layout');
+      const frames = { left: layout.querySelector('.why__frame--left'), right: layout.querySelector('.why__frame--right') };
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+      let index = 0, busy = false;
+
+      // wczytaj zdjęcia z góry, żeby zmiana była płynna
+      slides.forEach(s => [s.dataset.left, s.dataset.right].forEach(src => { new Image().src = src; }));
+
+      async function swap(frame, src, alt, dir, delay) {
+        const old = frame.querySelector('img');
+        const next = document.createElement('img');
+        next.alt = alt; next.src = src;
+        try { await next.decode(); } catch (_) {}
+        if (reduce.matches) { old.replaceWith(next); return; }
+        frame.appendChild(next);
+        const opts = { duration: 750, delay, easing: 'cubic-bezier(.65, 0, .25, 1)', fill: 'both' };
+        old.animate([{ transform: 'translateX(0)' }, { transform: `translateX(${-dir * 100}%)` }], opts);
+        const anim = next.animate([{ transform: `translateX(${dir * 100}%)` }, { transform: 'translateX(0)' }], opts);
+        await anim.finished;
+        old.remove();
+        anim.cancel();
+      }
+
+      async function go(dir) {
+        if (busy) return;
+        busy = true;
+        const from = slides[index];
+        index = (index + dir + slides.length) % slides.length;
+        const to = slides[index];
+        from.classList.remove('is-active'); from.setAttribute('aria-hidden', 'true');
+        to.classList.add('is-active'); to.removeAttribute('aria-hidden');
+        await Promise.all([
+          swap(frames.left, to.dataset.left, to.dataset.altLeft, dir, 0),
+          swap(frames.right, to.dataset.right, to.dataset.altRight, dir, 90)
+        ]);
+        busy = false;
+      }
+
+      document.querySelectorAll('.arrow').forEach(btn => btn.addEventListener('click', () => go(+btn.dataset.dir)));
+      slider.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight') go(1);
+        if (e.key === 'ArrowLeft') go(-1);
+      });
+
+      // przesunięcie palcem na telefonie
+      let x0 = 0, y0 = 0;
+      layout.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+      layout.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? 1 : -1);
+      }, { passive: true });
+    })();
 
     // Karuzela kolekcji
     (() => {
